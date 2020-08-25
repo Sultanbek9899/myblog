@@ -1,13 +1,39 @@
 {%extends 'base.html'%}
-
+{% load static %}
 {%block title%}
     {{post.title}}
 {%endblock%}
 
 {%block content%}
-<div><h1>{{post.title}}</h1>
 
+
+
+
+<div>
+    <h1>{{post.title}}</h1>
+    <img src="{{ post.image.url }}" alt="">
+    {{post.image}}
     <h6>Created on {{post.updated}} by {{post.author}}</h6>
     <p>{{post.body}}</p>
 </div>
+<!--ДЛЯ общего счёта всех комментариев в этом посту -->
+
+{% with comments.count as total_comments %}
+    <h2>{{ total_comments }} comment{{ total_comments|pluralize }}</h2>
+{% endwith %}
+
+
+
+	<h2>Add a new comment</h2>
+	<form action="." method="post">
+	{{ comment_form.name}}
+        {{comment_form.body}}
+    {% csrf_token %}
+	<p><input type="submit" value="Add comment"></p>
+	</form>
+{% for comment in comments %}
+    <h4>{{comment.name}}</h4>
+    <h5>{{comment.body}}</h5>
+
+{%endfor%}
 {%endblock%}

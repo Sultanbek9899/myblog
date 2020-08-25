@@ -1,13 +1,83 @@
 {% extends 'base.html'%}
 
 {% block title%}
-    MYBLOG
 {%endblock %}
 
 
 {%block content%}
-    {%for post in posts %}
-       <a href="{{ post.get_absolute_url }}"> <h2>{{post.title}}</h2></a>
+{%for post in post_data %}
+<div class="row pt-md-4">
+    <div class="col-md-12">
+        <div class="blog-entry ftco-animate d-md-flex">
+            <a href="{{post.get_absolute_url}}" class="img img-2" style="background-image: url({{post.image.url}});"></a>
+            <div class="text text-2 pl-md-4">
+                <h3 class="mb-2"><a href="{{post.get_absolute_url}}">{{post.title}}</a></h3>
+                <div class="meta-wrap">
+                    <p class="meta">
+                        <span><i class="icon-calendar mr-2"></i>{{post.created}}</span>
+                        <span><a href="single.html"><i class="icon-folder-o mr-2"></i>Travel</a></span>
+                        <span><i class="icon-comment2 mr-2"></i>
+                    {% with comments.count as total_comments %}
+                            {{ total_comments }} comment{{ total_comments|pluralize }}
+                    {% endwith %}
+                    </span>
+                    </p>
+                </div>
+                <p class="mb-4">A small river named Duden flows by their place and supplies it with the necessary regelialia.</p>
+                <p><a href="{{post.get_absolute_url}}" class="btn-custom">Read More <span class="ion-ios-arrow-forward"></span></a></p>
+            </div>
+        </div>
+    </div>
 
-    {% endfor %}
+</div>
+{% endfor %}
+{%if is_paginated %}
+<div class="row">
+    <div class="col">
+        <div class="block-27">
+            <ul>
+                <li class="page-item {%if not prev_url%} disabled {%endif%}">
+                    <a href="{{prev_url}}">Назад</a>
+                </li>
+
+                {% for n in post_data.paginator.page_range %}
+                    {% if post_data.number == n %}
+                    <li class="active">
+                        <a href="?page={{n}}" > {{n}}</a>
+                    </li>
+                    {%elif n > post_data.number|add:-3 and n < post_data.number|add:3 %}
+                    <li>
+                        <a href="?page={{n}}">
+                            {{n}}
+                        </a>
+                    </li>
+                    {%endif%}
+                {%endfor%}
+
+                <li class="page-item {%if not next%} disabled {%endif%}">
+                    <a href="{{next}}">Вперед</a>
+                </li>
+            </ul>
+        </div>
+    </div>
+</div>
+{%endif %}
 {% endblock %}
+    {% block latest %}
+        {%for latest_post in latest_posts%}
+          <div class="sidebar-box ftco-animate">
+                          <h3 class="sidebar-heading">Latest Articles</h3>
+                          <div class="block-21 mb-4 d-flex">
+                            <a class="blog-img mr-4" style="background-image: url(static/images/image_1.jpg);"></a>
+                            <div class="text">
+                              <h3 class="heading"><a href="#">{{latest_post.title}}</a></h3>
+                              <div class="meta">
+                                <div><a href="#"><span class="icon-calendar"></span> {{latest_post.created}}</a></div>
+                                <div><a href="#"><span class="icon-person"></span> {{latest_post.author}}</a></div>
+                                <div><a href="#"><span class="icon-chat"></span> 19</a></div>
+                              </div>
+                            </div>
+                          </div>
+                    </div>
+        {%endfor%}
+    {%endblock%}
